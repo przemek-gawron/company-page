@@ -1,12 +1,200 @@
+"use client";
+
+import { useState } from "react";
+
+// Opisy produktów - możesz je edytować
+const productDescriptions: Record<string, { title: string; description: string }> = {
+  // Uszczelki
+  "Płaskie": {
+    title: "Uszczelki płaskie",
+    description: "Uszczelki płaskie wykonywane są z różnych materiałów w zależności od zastosowania. Idealne do połączeń kołnierzowych, pokryw i innych powierzchni płaskich. Dostępne w standardowych i niestandardowych wymiarach."
+  },
+  "O-ringi": {
+    title: "O-ringi",
+    description: "O-ringi to uszczelki o przekroju okrągłym, stosowane w szerokim zakresie aplikacji. Wykonujemy je z gumy NBR, EPDM, FKM, silikon i innych materiałów. Dostępne w różnych twardościach i wymiarach."
+  },
+  "Simmeringi": {
+    title: "Simmeringi",
+    description: "Simmeringi (uszczelki wargowe) służą do uszczelniania wałów obrotowych. Chronią przed wyciekiem smaru i oleju oraz przed wnikaniem zanieczyszczeń. Dostępne w wersjach z jedną lub dwiema wargami uszczelniającymi."
+  },
+  "Pierścienie uszczelniające": {
+    title: "Pierścienie uszczelniające",
+    description: "Pierścienie uszczelniające stosowane w układach hydraulicznych i pneumatycznych. Wykonujemy je z tworzyw sztucznych, gumy i materiałów kompozytowych."
+  },
+  "Spiralne": {
+    title: "Uszczelki spiralne",
+    description: "Uszczelki spiralne (spiralnie zwijane) przeznaczone do wysokich ciśnień i temperatur. Składają się z naprzemiennie zwiniętych warstw metalu i materiału uszczelniającego."
+  },
+  "Wielokrawędziowe": {
+    title: "Uszczelki wielokrawędziowe",
+    description: "Uszczelki wielokrawędziowe metalowe do zastosowań wysokociśnieniowych. Charakteryzują się wieloma krawędziami uszczelniającymi zapewniającymi szczelność."
+  },
+
+  // Płyty uszczelkarskie
+  "Klingierytowe": {
+    title: "Płyty klingierytowe",
+    description: "Płyty klingierytowe (typu Gambit, Polonit, Klinger, Temac) wykonane z włókien aramidowych lub bezazbestowych z dodatkiem kauczuku. Stosowane do uszczelnień kołnierzy w instalacjach wodnych, parowych i chemicznych."
+  },
+  "Gumowe": {
+    title: "Płyty gumowe",
+    description: "Płyty gumowe lite dostępne w różnych odmianach: zwykłe, olejoodporne, kwasoodporne, do przemysłu spożywczego. Różne grubości i twardości w zależności od zastosowania."
+  },
+  "Silikonowe": {
+    title: "Płyty silikonowe",
+    description: "Płyty silikonowe charakteryzują się wysoką odpornością temperaturową (-60°C do +230°C) i elastycznością. Idealne do przemysłu spożywczego i farmaceutycznego."
+  },
+  "Grafitowe": {
+    title: "Płyty grafitowe",
+    description: "Płyty grafitowe ekspandowane do wysokich temperatur (do 550°C) i ciśnień. Doskonała odporność chemiczna. Dostępne w wersji czystej lub z wkładką metalową."
+  },
+  "Teflonowe": {
+    title: "Płyty teflonowe (PTFE)",
+    description: "Płyty teflonowe PTFE o doskonałej odporności chemicznej i niskim współczynniku tarcia. Zakres temperatur od -200°C do +260°C. Idealne do agresywnych mediów chemicznych."
+  },
+  "Tekturowe, korkowe": {
+    title: "Płyty tekturowe i korkowe",
+    description: "Płyty tekturowe termoizolacyjne i korkowe do zastosowań o niskich wymaganiach. Ekonomiczne rozwiązanie do uszczelnień niskotemperaturowych i niskociśnieniowych."
+  },
+
+  // Szczeliwa do pomp i zaworów
+  "Bawełniane": {
+    title: "Szczeliwa bawełniane",
+    description: "Szczeliwa bawełniane impregnowane do dławnic pomp i zaworów. Stosowane w instalacjach wodnych i parowych o niskich parametrach."
+  },
+  "Aramidowe": {
+    title: "Szczeliwa aramidowe",
+    description: "Szczeliwa aramidowe (kevlarowe) o wysokiej wytrzymałości mechanicznej i odporności temperaturowej. Do dławnic pomp pracujących w trudnych warunkach."
+  },
+  "Syntetyczne": {
+    title: "Szczeliwa syntetyczne",
+    description: "Szczeliwa syntetyczne z włókien PTFE, aramidowych i innych tworzyw. Uniwersalne zastosowanie w różnych mediach i temperaturach."
+  },
+  "Węglowe": {
+    title: "Szczeliwa węglowe",
+    description: "Szczeliwa węglowe i grafitowe do wysokich temperatur i agresywnych mediów. Doskonałe właściwości samosmarujące."
+  },
+
+  // Taśmy i sznury
+  "Taśmy teflonowe, grafitowe, szklane, ceramiczne": {
+    title: "Taśmy uszczelniające",
+    description: "Taśmy uszczelniające teflonowe, grafitowe, szklane i ceramiczne. Do uszczelnień połączeń gwintowych, kołnierzowych i jako izolacja termiczna."
+  },
+  "Szczeliwa termoizolacyjne szklane": {
+    title: "Szczeliwa termoizolacyjne szklane",
+    description: "Sznury i szczeliwa z włókna szklanego do izolacji termicznej. Temperatura pracy do 550°C. Dostępne w różnych średnicach i splotach."
+  },
+  "Szczeliwa termoizolacyjne ceramiczne": {
+    title: "Szczeliwa termoizolacyjne ceramiczne",
+    description: "Sznury i szczeliwa ceramiczne do bardzo wysokich temperatur (do 1260°C). Stosowane w piecach, kotłach i innych urządzeniach wysokotemperaturowych."
+  },
+  "Tkaniny szklane, ceramiczne, aramidowe": {
+    title: "Tkaniny przemysłowe",
+    description: "Tkaniny techniczne szklane, ceramiczne i aramidowe. Do izolacji termicznej, osłon przeciwogniowych i jako materiał konstrukcyjny."
+  },
+
+  // Tworzywa konstrukcyjne
+  "Teflon (PTFE)": {
+    title: "Teflon (PTFE)",
+    description: "Politetrafluoroetylen - tworzywo o najniższym współczynniku tarcia i doskonałej odporności chemicznej. Pręty, tuleje, płyty. Temperatura pracy -200°C do +260°C."
+  },
+  "Poliamid (PA6, PA6G)": {
+    title: "Poliamid (PA6, PA6G)",
+    description: "Poliamid odlewany i ekstrudowany. Wysoka wytrzymałość mechaniczna, dobra odporność na ścieranie. Do tulei, kół zębatych, prowadnic."
+  },
+  "Polietylen (PE), Polipropylen (PP)": {
+    title: "Polietylen i Polipropylen",
+    description: "PE i PP - tworzywa o dobrej odporności chemicznej i niskiej masie. Do zbiorników, wykładzin, elementów konstrukcyjnych."
+  },
+  "Poliacetal (POM), Poliwęglan (PC)": {
+    title: "Poliacetal i Poliwęglan",
+    description: "POM - tworzywo precyzyjne do elementów mechanicznych. PC - tworzywo przezroczyste o wysokiej udarności. Pręty, płyty, tuleje."
+  },
+  "PEEK, PVC, Tekstolit": {
+    title: "PEEK, PVC, Tekstolit",
+    description: "PEEK - tworzywo wysokotemperaturowe do 250°C. PVC - tworzywo chemoodporne. Tekstolit - laminat tkaninowy do elementów elektroizolacyjnych i mechanicznych."
+  },
+
+  // Metale i stale
+  "Brąz, mosiądz, miedź, aluminium": {
+    title: "Metale kolorowe",
+    description: "Brąz, mosiądz, miedź i aluminium w postaci prętów, tulei, rur, blach i formatek. Do tulei ślizgowych, łożysk, elementów przewodzących."
+  },
+  "Stale nierdzewne i kwasoodporne": {
+    title: "Stale nierdzewne i kwasoodporne",
+    description: "Stale gatunków 304, 316, 321 i innych. Rury, kołnierze, kolana, trójniki, redukcje. Do instalacji chemicznych i spożywczych."
+  },
+  "Stale kotłowe": {
+    title: "Stale kotłowe",
+    description: "Stale kotłowe do pracy w wysokich temperaturach i ciśnieniach. Rury, dennice, kołnierze zgodne z normami ciśnieniowymi."
+  },
+};
+
 export default function Home() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState<{ title: string; description: string } | null>(null);
+
+  const openModal = (productName: string) => {
+    // Usuń "- " z początku jeśli istnieje
+    const cleanName = productName.replace(/^- /, "");
+    const content = productDescriptions[cleanName];
+    if (content) {
+      setModalContent(content);
+      setModalOpen(true);
+    }
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setModalContent(null);
+  };
+
+  const ProductItem = ({ name, className = "" }: { name: string; className?: string }) => {
+    const cleanName = name.replace(/^- /, "");
+    const hasDescription = productDescriptions[cleanName];
+
+    return (
+      <li
+        onClick={() => hasDescription && openModal(name)}
+        className={`${hasDescription ? "cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors" : ""} ${className}`}
+      >
+        {name}
+      </li>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-white font-sans dark:bg-zinc-950">
+      {/* Modal */}
+      {modalOpen && modalContent && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={closeModal}></div>
+          <div className="relative bg-white dark:bg-zinc-800 rounded-2xl p-8 max-w-lg w-full shadow-2xl">
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors"
+            >
+              <svg className="w-5 h-5 text-zinc-600 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mb-4">{modalContent.title}</h3>
+            <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">{modalContent.description}</p>
+            <button
+              onClick={closeModal}
+              className="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              Zamknij
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-zinc-200 dark:bg-zinc-950/90 dark:border-zinc-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
-              <img src="/logo-jtech-hq.png" alt="J-Tech Logo" className="h-12 w-auto" />
+              <span className="text-xl font-bold text-zinc-900 dark:text-white">J-Tech</span>
             </div>
             <div className="hidden md:flex items-center gap-8">
               <a href="#about" className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">O nas</a>
@@ -179,22 +367,22 @@ export default function Home() {
             <h3 className="text-xl font-semibold text-zinc-900 dark:text-white mb-4">Materiały do wycinania uszczelek</h3>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-zinc-600 dark:text-zinc-400">
               <ul className="space-y-2">
-                <li>- Płyty gumowe lite (zwykłe, olejoodporne, kwasoodporne, spożywcze)</li>
-                <li>- Płyty silikonowe</li>
-                <li>- Płyty klingierytowe (Gambit, Polonit, Klinger, Temac)</li>
-                <li>- Płyty grafitowe</li>
+                <ProductItem name="- Płyty gumowe lite (zwykłe, olejoodporne, kwasoodporne, spożywcze)" />
+                <ProductItem name="- Płyty silikonowe" />
+                <ProductItem name="- Płyty klingierytowe (Gambit, Polonit, Klinger, Temac)" />
+                <ProductItem name="- Płyty grafitowe" />
               </ul>
               <ul className="space-y-2">
-                <li>- Płyty teflonowe</li>
-                <li>- Tektura termoizolacyjna</li>
-                <li>- Poliuretan</li>
-                <li>- Mikroguma</li>
+                <ProductItem name="- Płyty teflonowe" />
+                <ProductItem name="- Tektura termoizolacyjna" />
+                <ProductItem name="- Poliuretan" />
+                <ProductItem name="- Mikroguma" />
               </ul>
               <ul className="space-y-2">
-                <li>- Filc techniczny</li>
-                <li>- Korek</li>
-                <li>- Preszpan</li>
-                <li>- Inne materiały na zamówienie</li>
+                <ProductItem name="- Filc techniczny" />
+                <ProductItem name="- Korek" />
+                <ProductItem name="- Preszpan" />
+                <ProductItem name="- Inne materiały na zamówienie" />
               </ul>
             </div>
           </div>
@@ -207,7 +395,7 @@ export default function Home() {
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white">Nasze produkty</h2>
             <p className="mt-4 text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-              Oferujemy materiały producentów zarówno krajowych jak i zagranicznych
+              Oferujemy materiały producentów zarówno krajowych jak i zagranicznych. Kliknij na produkt, aby zobaczyć szczegóły.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -218,12 +406,12 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold text-zinc-900 dark:text-white mb-3">Uszczelki</h3>
               <ul className="text-zinc-600 dark:text-zinc-400 space-y-2">
-                <li>- Płaskie</li>
-                <li>- O-ringi</li>
-                <li>- Simmeringi</li>
-                <li>- Pierścienie uszczelniające</li>
-                <li>- Spiralne</li>
-                <li>- Wielokrawędziowe</li>
+                <ProductItem name="- Płaskie" />
+                <ProductItem name="- O-ringi" />
+                <ProductItem name="- Simmeringi" />
+                <ProductItem name="- Pierścienie uszczelniające" />
+                <ProductItem name="- Spiralne" />
+                <ProductItem name="- Wielokrawędziowe" />
               </ul>
             </div>
             {/* Płyty uszczelkarskie */}
@@ -233,12 +421,12 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold text-zinc-900 dark:text-white mb-3">Płyty uszczelkarskie</h3>
               <ul className="text-zinc-600 dark:text-zinc-400 space-y-2">
-                <li>- Klingierytowe</li>
-                <li>- Gumowe</li>
-                <li>- Silikonowe</li>
-                <li>- Grafitowe</li>
-                <li>- Teflonowe</li>
-                <li>- Tekturowe, korkowe</li>
+                <ProductItem name="- Klingierytowe" />
+                <ProductItem name="- Gumowe" />
+                <ProductItem name="- Silikonowe" />
+                <ProductItem name="- Grafitowe" />
+                <ProductItem name="- Teflonowe" />
+                <ProductItem name="- Tekturowe, korkowe" />
               </ul>
             </div>
             {/* Szczeliwa */}
@@ -252,12 +440,12 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold text-zinc-900 dark:text-white mb-3">Szczeliwa do pomp i zaworów</h3>
               <ul className="text-zinc-600 dark:text-zinc-400 space-y-2">
-                <li>- Bawełniane</li>
-                <li>- Aramidowe</li>
-                <li>- Syntetyczne</li>
-                <li>- Teflonowe</li>
-                <li>- Grafitowe</li>
-                <li>- Węglowe</li>
+                <ProductItem name="- Bawełniane" />
+                <ProductItem name="- Aramidowe" />
+                <ProductItem name="- Syntetyczne" />
+                <ProductItem name="- Teflonowe" />
+                <ProductItem name="- Grafitowe" />
+                <ProductItem name="- Węglowe" />
               </ul>
             </div>
             {/* Taśmy i sznury */}
@@ -267,10 +455,10 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold text-zinc-900 dark:text-white mb-3">Taśmy i sznury</h3>
               <ul className="text-zinc-600 dark:text-zinc-400 space-y-2">
-                <li>- Taśmy teflonowe, grafitowe, szklane, ceramiczne</li>
-                <li>- Szczeliwa termoizolacyjne szklane</li>
-                <li>- Szczeliwa termoizolacyjne ceramiczne</li>
-                <li>- Tkaniny szklane, ceramiczne, aramidowe</li>
+                <ProductItem name="- Taśmy teflonowe, grafitowe, szklane, ceramiczne" />
+                <ProductItem name="- Szczeliwa termoizolacyjne szklane" />
+                <ProductItem name="- Szczeliwa termoizolacyjne ceramiczne" />
+                <ProductItem name="- Tkaniny szklane, ceramiczne, aramidowe" />
               </ul>
             </div>
             {/* Tworzywa konstrukcyjne */}
@@ -280,11 +468,11 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold text-zinc-900 dark:text-white mb-3">Tworzywa konstrukcyjne</h3>
               <ul className="text-zinc-600 dark:text-zinc-400 space-y-2 text-sm">
-                <li>- Teflon (PTFE)</li>
-                <li>- Poliamid (PA6, PA6G)</li>
-                <li>- Polietylen (PE), Polipropylen (PP)</li>
-                <li>- Poliacetal (POM), Poliwęglan (PC)</li>
-                <li>- PEEK, PVC, Tekstolit</li>
+                <ProductItem name="- Teflon (PTFE)" />
+                <ProductItem name="- Poliamid (PA6, PA6G)" />
+                <ProductItem name="- Polietylen (PE), Polipropylen (PP)" />
+                <ProductItem name="- Poliacetal (POM), Poliwęglan (PC)" />
+                <ProductItem name="- PEEK, PVC, Tekstolit" />
                 <li className="text-xs text-zinc-500">Pręty, tuleje, płyty</li>
               </ul>
             </div>
@@ -295,9 +483,9 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold text-zinc-900 dark:text-white mb-3">Metale i stale</h3>
               <ul className="text-zinc-600 dark:text-zinc-400 space-y-2">
-                <li>- Brąz, mosiądz, miedź, aluminium</li>
-                <li>- Stale nierdzewne i kwasoodporne</li>
-                <li>- Stale kotłowe</li>
+                <ProductItem name="- Brąz, mosiądz, miedź, aluminium" />
+                <ProductItem name="- Stale nierdzewne i kwasoodporne" />
+                <ProductItem name="- Stale kotłowe" />
                 <li className="text-xs text-zinc-500">Rury, kołnierze, kolana, trójniki, redukcje, dennice, pręty, tuleje, blachy</li>
               </ul>
             </div>
@@ -471,6 +659,17 @@ export default function Home() {
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center shrink-0">
                       <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="font-medium text-zinc-900 dark:text-white">Telefon</p>
+                      <a href="tel:+48504044949" className="text-blue-600 dark:text-blue-400 hover:underline">504 044 949</a>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center shrink-0">
+                      <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                     </div>
@@ -500,7 +699,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <img src="/logo-j-tech.png" alt="J-Tech Logo" className="h-10 w-auto" />
+                <span className="text-xl font-bold text-white">J-Tech</span>
               </div>
               <p className="text-zinc-400 max-w-md">
                 Uszczelnienia techniczne, tworzywa konstrukcyjne i obróbka CNC. Ponad 20 lat doświadczenia w branży.
