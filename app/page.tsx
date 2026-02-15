@@ -2,6 +2,74 @@
 
 import { useState } from "react";
 
+// Structured Data dla SEO (JSON-LD)
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "J-Tech",
+  "description": "Kompleksowe zaopatrzenie zakładów przemysłowych w systemy uszczelnień technicznych, tworzywa konstrukcyjne i obróbkę CNC.",
+  "url": "https://uszczelkijtech.com",
+  "telephone": "+48504044949",
+  "email": "biurojtech@wp.pl",
+  "foundingDate": "2025",
+  "priceRange": "$$",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "PL"
+  },
+  "areaServed": {
+    "@type": "Country",
+    "name": "Polska"
+  },
+  "serviceType": [
+    "Uszczelnienia techniczne",
+    "Wycinanie uszczelek CNC",
+    "Obróbka tworzyw sztucznych CNC",
+    "Obróbka metali CNC",
+    "Tworzywa konstrukcyjne",
+    "Płyty uszczelkarskie",
+    "Szczeliwa do pomp i zaworów"
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Produkty J-Tech",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Product",
+          "name": "Uszczelki",
+          "description": "O-ringi, simmeringi, uszczelki płaskie, spiralne, wielokrawędziowe"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Product",
+          "name": "Płyty uszczelkarskie",
+          "description": "Płyty klingierytowe, gumowe, silikonowe, grafitowe, teflonowe"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Product",
+          "name": "Tworzywa konstrukcyjne",
+          "description": "PTFE, PA6, POM, PEEK, PE, PP, PC, PVC, tekstolit"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Product",
+          "name": "Metale kolorowe i stale",
+          "description": "Brąz, mosiądz, miedź, aluminium, stale nierdzewne i kwasoodporne"
+        }
+      }
+    ]
+  }
+};
+
 // Opisy produktów - możesz je edytować
 const productDescriptions: Record<string, { title: string; description: string }> = {
   // Uszczelki
@@ -163,6 +231,13 @@ export default function Home() {
   };
 
   return (
+    <>
+      {/* JSON-LD Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
     <div className="min-h-screen bg-white font-sans dark:bg-zinc-950">
       {/* Modal */}
       {modalOpen && modalContent && (
@@ -735,5 +810,6 @@ export default function Home() {
         </div>
       </footer>
     </div>
+    </>
   );
 }
