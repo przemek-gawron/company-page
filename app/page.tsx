@@ -101,7 +101,7 @@ const productDescriptions: Record<string, { title: string; description: string }
   // Płyty uszczelkarskie
   "Klingierytowe": {
     title: "Płyty klingierytowe",
-    description: "Płyty klingierytowe (typu Gambit, Polonit, Klinger, Temac) wykonane z włókien aramidowych lub bezazbestowych z dodatkiem kauczuku. Stosowane do uszczelnień kołnierzy w instalacjach wodnych, parowych i chemicznych."
+    description: "Płyty klingierytowe (typu Gambit, Polonit, Klinger, Temac) wykonane z włókien aramidowych lub bezazbestowych z dodatkiem kauczuku. Stosowane do uszczelnień kołnierzy w instalacjach wodnych i parowych."
   },
   "Gumowe": {
     title: "Płyty gumowe",
