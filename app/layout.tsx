@@ -13,8 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "J-Tech Rubber Seals | Premium Industrial Sealing Solutions",
-  description: "J-Tech delivers high-quality rubber sealing solutions for automotive, aerospace, oil & gas, and industrial applications. O-rings, gaskets, oil seals, and custom solutions.",
+  title: "J-Tech | Uszczelnienia techniczne i tworzywa konstrukcyjne",
+  description: "J-Tech - ponad 20 lat doświadczenia w branży uszczelnień technicznych. Wycinanie uszczelek CNC, tworzywa konstrukcyjne, metale kolorowe, stale. Wsparcie techniczne przy doborze materiału.",
+  icons: {
+    icon: "/logo-j-tech.png",
+  },
 };
 
 export default function RootLayout({
